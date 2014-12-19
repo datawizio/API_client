@@ -10,6 +10,11 @@ datapump_query = """select 'category' as name, max(updatenum) as updatenum
                     union all
                     select 'pack', max(updatenum) from pack
                  """
+# [category;935 
+#product;2765
+#cashier;110
+#pack;1963]
+#935 - номер версії
 
 sales_lastdate_query = """select shop_identifier
     , max(sales_dt)
@@ -43,6 +48,7 @@ where sales.SALESEXTKEY <> 16
   and not sales.terminal_identifier in ('12-2','3-2','1-3','9-2','9-3')
 group by shop_identifier
 """
+# [[shopid,datestano]]
 
 unit_query = """select distinct cast(unitid as nvarchar)
                                 + '-'
@@ -60,14 +66,16 @@ unit_query = """select distinct cast(unitid as nvarchar)
                   from pack
                  where updatenum > %i and updatenum <= %i
              """
+#[<old_version,new_version]
 
-terminal_query = """select distinct cast(sareaid as nvarchar)
-                                    + '-' + cast(systemid as nvarchar)
-                                    as terminal_identifier
-                                  , sareaid as shop_identifier
-                                  , 'Kassa '+cast(systemid as nvarchar) name
-                      from sales
-                 """
+#terminal_query = """select distinct cast(sareaid as nvarchar)
+#                                    + '-' + cast(systemid as nvarchar)
+#                                    as terminal_identifier
+#                                  , sareaid as shop_identifier
+#                                  , 'Kassa '+cast(systemid as nvarchar) name
+#                      from sales
+#                 """
+
 
 #shop_query = """select sareaid as shop_identifier, sareaname as name
 #                  from sarea where sareaid not in (0,11)"""
@@ -77,6 +85,7 @@ cashier_query = """select cashierid as cashier_identifier, cashiername as name
                     where cashiergrpid in (1,4)
                      and updatenum > %i and updatenum <= %i
                """
+#for new cachiers [[cachierid,name]]
 
 category_query = """select grpid as category_identifier
                         , parentgrpid as category_parent_identifier
@@ -84,6 +93,7 @@ category_query = """select grpid as category_identifier
                      from grp
                     where updatenum > %i and updatenum <= %i
                 """
+#for new categories [[cat_id, parent_id, cat_name]]
 
 product_query = """select cast(a.artid as nvarchar)
                           + '-'
@@ -110,6 +120,7 @@ product_query = """select cast(a.artid as nvarchar)
                     where (a.updatenum > %i and a.updatenum <= %i)
                        or (p.updatenum > %i and p.updatenum <= %i)
                 """
+#for new product [[prod_id,  cat_id, prod_name]]
 
 receipt_query = """select sales_dt
                         , terminal_identifier
@@ -162,4 +173,5 @@ receipt_query = """select sales_dt
                          ('12-2','3-2','1-3','9-2','9-3')
                    order by 1,2,3,4
                 """
-
+#[[sales_dt, terminal_identifier, receipt_identifier, posnum, price, total_price, qty, product_identifier, packed, cashier_identifier],
+#[sales_dt, terminal_identifier, receipt_identifier, posnum, price, total_price, qty, product_identifier, packed, cashier_identifier]]
